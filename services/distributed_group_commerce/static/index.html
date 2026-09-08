@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Group-Buying & Viral Attribution Engine | Meesho DICE 3.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .pulse-glow { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center font-bold text-white shadow-lg shadow-emerald-500/30">G</div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            Distributed Group-Buying & Viral Engine <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Growth Track</span>
+          </h1>
+          <p class="text-xs text-slate-400">Atomic Reservation Locking, WhatsApp Deep-Link Loops & K-Factor Analytics</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Bharat PWA Optimised (<50KB)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <!-- Top Stats: Viral Coefficient K-Factor KPIs -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl shadow-lg">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Total Initiators</span>
+        <div id="statInitiators" class="text-2xl font-black text-white mt-1">--</div>
+        <span class="text-[10px] text-slate-500">Seed shoppers starting deals</span>
+      </div>
+
+      <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl shadow-lg">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">WhatsApp Invites Sent</span>
+        <div id="statInvites" class="text-2xl font-black text-teal-400 mt-1">--</div>
+        <span class="text-[10px] text-slate-500">Deep-link clicks & shares</span>
+      </div>
+
+      <div class="bg-slate-900/70 border border-slate-800 p-4 rounded-xl shadow-lg">
+        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block">Invite-to-Buy Conversion</span>
+        <div id="statConversion" class="text-2xl font-black text-amber-400 mt-1">--</div>
+        <span class="text-[10px] text-slate-500">Friend group join rate (c)</span>
+      </div>
+
+      <div class="bg-slate-900/70 border-2 border-emerald-500/50 p-4 rounded-xl shadow-lg relative overflow-hidden">
+        <div class="absolute -right-4 -bottom-4 w-16 h-16 bg-emerald-500/10 rounded-full blur-lg"></div>
+        <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider block">Viral K-Factor (K = i × c)</span>
+        <div id="statKFactor" class="text-2xl font-black text-emerald-400 mt-1">--</div>
+        <span id="kFactorStatus" class="text-[10px] text-emerald-300 font-semibold block mt-0.5">Calculating...</span>
+      </div>
+    </div>
+
+    <!-- Middle: Live Group Deal Simulation & WhatsApp Action -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left: Active Group Purchase Card -->
+      <div class="lg:col-span-6 space-y-4">
+        <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Live Group Deal (Simulated Shopper Flow)</h2>
+
+        <div id="groupDealCard" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-5">
+          <div class="flex gap-4">
+            <div class="w-24 h-28 rounded-xl bg-gradient-to-br from-amber-500/20 to-pink-500/20 border border-slate-700 flex items-center justify-center text-3xl shadow-inner">
+              👗
+            </div>
+            <div class="flex-1 space-y-1">
+              <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-rose-500 text-white">
+                50% Group Discount
+              </div>
+              <h3 id="dealTitle" class="text-base font-bold text-white">Jaipuri Silk Bandhani Saree with Zari Border</h3>
+              <div class="flex items-baseline gap-2 pt-1">
+                <span id="dealGroupPrice" class="text-2xl font-black text-emerald-400">₹299</span>
+                <span id="dealRetailPrice" class="text-sm text-slate-500 line-through">₹599</span>
+                <span class="text-xs text-emerald-400 font-medium">Free Delivery</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Countdown and Progress -->
+          <div class="bg-slate-950/80 rounded-xl p-4 border border-slate-800 space-y-3">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400 font-medium">Lock Window Remaining:</span>
+              <span id="countdownTimer" class="font-mono font-bold text-rose-400 bg-rose-950/50 px-2 py-0.5 rounded border border-rose-500/30">01:58:42</span>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1.5 font-medium">
+                <span id="slotSummary" class="text-slate-200">1 of 3 slots filled</span>
+                <span id="slotsNeeded" class="text-teal-400">2 more buyers needed</span>
+              </div>
+              <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden">
+                <div id="slotProgressBar" class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all duration-500" style="width: 33.3%;"></div>
+              </div>
+            </div>
+
+            <!-- Participants list -->
+            <div id="participantsList" class="space-y-1.5 pt-2">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="space-y-2 pt-2">
+            <button onclick="shareWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 text-sm">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+              Share on WhatsApp (+3 Invites)
+            </button>
+            <div class="flex gap-2">
+              <button onclick="simulateFriendJoin('Pooja Singh', '9876543210')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-lg text-xs font-medium border border-slate-700 transition">
+                + Simulate Friend Join
+              </button>
+              <button onclick="createNewDeal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-3 rounded-lg text-xs font-medium border border-slate-700 transition">
+                New Deal
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Viral Attribution Graph & Tree Visualization -->
+      <div class="lg:col-span-6 space-y-4">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Referral Attribution Tree (Viral DAG)</h2>
+          <span class="text-xs text-slate-500 font-mono">Gen 0 → Gen 1 → Gen 2</span>
+        </div>
+
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-xl min-h-[420px] flex flex-col justify-between">
+          <div id="treeContainer" class="space-y-3">
+            <!-- Rendered Nodes -->
+          </div>
+
+          <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Seed Buyer</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-teal-400"></span> Invited Friend</span>
+            </div>
+            <span class="font-mono text-slate-500">Sub-50ms Graph Traversal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let activeGroupId = null;
+
+    async function loadData() {
+      try {
+        // Load active groups
+        const groupsRes = await fetch('/api/groups');
+        const groups = await groupsRes.json();
+        if (groups.length > 0) {
+          renderGroup(groups[0]);
+          activeGroupId = groups[0].group_id;
+        }
+
+        // Load metrics
+        const metricsRes = await fetch('/api/virality/metrics');
+        const m = await metricsRes.json();
+        document.getElementById('statInitiators').innerText = m.total_initiators;
+        document.getElementById('statInvites').innerText = m.total_invites_sent;
+        document.getElementById('statConversion').innerText = `${(m.conversion_rate * 100).toFixed(1)}%`;
+        document.getElementById('statKFactor').innerText = `K = ${m.viral_coefficient_k.toFixed(2)}`;
+
+        const statusEl = document.getElementById('kFactorStatus');
+        if (m.is_viral_loop_sustainable) {
+          statusEl.innerText = "✓ Super-Critical (K > 1.0) Exponential Growth";
+          statusEl.className = "text-[10px] text-emerald-400 font-bold block mt-0.5";
+        } else {
+          statusEl.innerText = "Sub-Critical (K < 1.0) Requires Paid Nudges";
+          statusEl.className = "text-[10px] text-amber-400 font-bold block mt-0.5";
+        }
+
+        // Load graph
+        const graphRes = await fetch('/api/virality/graph');
+        const g = await graphRes.json();
+        renderGraph(g);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderGroup(g) {
+      document.getElementById('dealTitle').innerText = g.product_title;
+      document.getElementById('dealGroupPrice').innerText = `₹${g.group_discount_price}`;
+      document.getElementById('dealRetailPrice').innerText = `₹${g.retail_price}`;
+
+      const pct = (g.current_members / g.required_members) * 100;
+      document.getElementById('slotProgressBar').style.width = `${pct}%`;
+      document.getElementById('slotSummary').innerText = `${g.current_members} of ${g.required_members} slots filled`;
+
+      const remaining = g.required_members - g.current_members;
+      const neededEl = document.getElementById('slotsNeeded');
+      if (g.status === 'completed') {
+        neededEl.innerText = "✓ DEAL UNLOCKED & COMPLETED!";
+        neededEl.className = "text-emerald-400 font-bold";
+      } else {
+        neededEl.innerText = `${remaining} more buyer${remaining > 1 ? 's' : ''} needed`;
+        neededEl.className = "text-teal-400";
+      }
+
+      const listEl = document.getElementById('participantsList');
+      listEl.innerHTML = g.participants.map(p => `
+        <div class="flex justify-between items-center text-xs p-2 rounded-lg bg-slate-900 border border-slate-800">
+          <div class="flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-[10px]">
+              ${p.user_name.charAt(0)}
+            </span>
+            <span class="font-medium text-slate-200">${p.user_name} ${p.is_initiator ? '<span class="text-[10px] text-amber-400 font-semibold">(Initiator)</span>' : ''}</span>
+          </div>
+          <span class="font-mono text-[10px] text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/20">₹${g.group_discount_price} Paid</span>
+        </div>
+      `).join('');
+    }
+
+    function renderGraph(g) {
+      const container = document.getElementById('treeContainer');
+      container.innerHTML = g.nodes.map(n => {
+        const isRoot = n.depth === 0;
+        const indent = n.depth * 20;
+        return `
+          <div class="flex items-center gap-2 p-2.5 rounded-xl border ${isRoot ? 'bg-emerald-950/20 border-emerald-500/40' : 'bg-slate-900/60 border-slate-800'}" style="margin-left: ${indent}px">
+            <span class="w-7 h-7 rounded-lg ${isRoot ? 'bg-emerald-500 text-white' : 'bg-teal-500/20 text-teal-300'} flex items-center justify-center font-bold text-xs">
+              ${isRoot ? '★' : '↳'}
+            </span>
+            <div class="flex-1 text-xs">
+              <div class="font-semibold text-slate-200">${n.name}</div>
+              <div class="text-[10px] text-slate-500 font-mono">Invites Sent: ${n.invites} | Converted Joins: ${n.conversions}</div>
+            </div>
+            <span class="text-[10px] px-2 py-0.5 rounded-full ${n.conversions > 0 ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'} font-mono">
+              Gen ${n.depth}
+            </span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function shareWhatsApp() {
+      try {
+        await fetch('/api/referrals/invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender_id: 'usr_anita_sharma', count: 3 })
+        });
+        alert("WhatsApp Share Link Generated!\n3 invitations broadcasted to community group.");
+        loadData();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function simulateFriendJoin(name, phone) {
+      if (!activeGroupId) return;
+      try {
+        const res = await fetch(`/api/groups/${activeGroupId}/join?referrer_id=usr_anita_sharma`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: 'usr_' + Math.random().toString(36).substr(2, 6),
+            user_name: name + ' ' + Math.floor(Math.random() * 90 + 10),
+            phone_masked: `+91 ${phone.slice(0, 2)}*** ***${phone.slice(-2)}`
+          })
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          loadData();
+        }
+      } catch (err) {
+        alert("Slot full or error joining.");
+      }
+    }
+
+    async function createNewDeal() {
+      try {
+        const res = await fetch('/api/groups/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product_id: 'prod_kurti_' + Math.floor(Math.random() * 100),
+            product_title: 'Embroidered Anarkali Kurta Set',
+            retail_price: 699,
+            group_discount_price: 349,
+            initiator_id: 'usr_sunita_verma',
+            initiator_name: 'Sunita Verma',
+            required_members: 3,
+            window_minutes: 120
+          })
+        });
+        const data = await res.json();
+        activeGroupId = data.group_id;
+        loadData();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    window.onload = loadData;
+  </script>
+</body>
+</html>

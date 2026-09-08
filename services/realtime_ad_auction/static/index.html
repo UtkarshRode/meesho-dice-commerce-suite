@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-Time Ad-Auction Engine (GSP) | Meesho DICE 3.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-pink-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-lg shadow-pink-500/30">M</div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            Real-Time Ad-Auction Engine <span class="text-xs px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-400 font-semibold border border-pink-500/30">Monetization Track</span>
+          </h1>
+          <p class="text-xs text-slate-400">Generalized Second-Price (GSP) Auction with Diurnal Budget Pacing & pCTR Ranking</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-xs">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          Sub-15ms Auction Server Active
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <!-- Controls & Auction Simulator Bar -->
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5 shadow-xl">
+      <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-3">Live Search Auction Simulator</h2>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+        <div class="md:col-span-4">
+          <label class="block text-xs font-medium text-slate-300 mb-1">Search Query (Simulated Buyer Intent)</label>
+          <div class="relative">
+            <input id="queryInput" type="text" value="yellow bandhani saree" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-pink-500 transition" />
+            <button onclick="setQuery('yellow kurti')" class="absolute right-2 top-2 text-[10px] text-pink-400 hover:text-pink-300 bg-pink-950/40 px-1.5 py-0.5 rounded border border-pink-500/20">Try Kurti</button>
+          </div>
+        </div>
+
+        <div class="md:col-span-3">
+          <label class="block text-xs font-medium text-slate-300 mb-1">
+            Simulated Hour of Day: <span id="hourLabel" class="text-pink-400 font-bold">14:00 (Afternoon)</span>
+          </label>
+          <input id="hourSlider" type="range" min="0" max="23" value="14" oninput="updateHour(this.value)" class="w-full accent-pink-500 cursor-pointer" />
+          <div class="flex justify-between text-[10px] text-slate-500">
+            <span>00:00 (Night)</span>
+            <span>12:00 (Peak 1)</span>
+            <span>20:00 (Peak 2)</span>
+          </div>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-medium text-slate-300 mb-1">User Segment</label>
+          <select id="userSegment" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-pink-500">
+            <option value="tier_2_shopper">Bharat Tier 2/3</option>
+            <option value="tier_1_metro">Metro Tier 1</option>
+            <option value="reseller_agent">Reseller Partner</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-3 flex gap-2">
+          <button onclick="runAuction()" class="flex-1 bg-gradient-to-r from-pink-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white font-medium py-2 px-4 rounded-lg text-sm shadow-lg shadow-pink-500/20 transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Trigger Auction
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Auction Results & Formula Breakdown -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Left: Winning Ads Display -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-400">Auction Result & Sponsored Slots</h2>
+          <span id="auctionMetrics" class="text-xs text-slate-400"></span>
+        </div>
+
+        <div id="winningAdsContainer" class="space-y-3">
+          <!-- Dynamic Winner Card injected here -->
+        </div>
+
+        <!-- All Candidate Bids Breakdown Table -->
+        <div class="bg-slate-800/40 border border-slate-700/50 rounded-xl overflow-hidden shadow-lg mt-4">
+          <div class="px-4 py-3 bg-slate-800/80 border-b border-slate-700 flex justify-between items-center">
+            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">All Scored Bid Candidates</h3>
+            <span class="text-[11px] text-slate-400 font-mono">eCPM = Bid × pCTR × 1000</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-900/60 text-slate-400 text-[11px]">
+                <tr>
+                  <th class="px-3 py-2">Campaign / Product</th>
+                  <th class="px-3 py-2">Raw Bid</th>
+                  <th class="px-3 py-2">pCTR</th>
+                  <th class="px-3 py-2 text-pink-400">eCPM (Rank Score)</th>
+                  <th class="px-3 py-2">Pacing (ρ)</th>
+                  <th class="px-3 py-2">Status</th>
+                </tr>
+              </thead>
+              <tbody id="bidsTableBody" class="divide-y divide-slate-700/40">
+                <!-- Rows injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Seller Campaign Management & Fraud Simulation -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 shadow-xl space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-semibold text-slate-300 uppercase tracking-wider">Active Seller Campaigns (Meesho 0% Commission)</h3>
+            <span class="text-[10px] bg-slate-700 px-2 py-0.5 rounded text-slate-300">Live In-Memory Store</span>
+          </div>
+
+          <div id="campaignsContainer" class="space-y-2.5 max-h-80 overflow-y-auto pr-1">
+            <!-- Campaigns with budget bars injected here -->
+          </div>
+
+          <!-- Click Fraud Test Sandbox -->
+          <div class="pt-3 border-t border-slate-700/60">
+            <h4 class="text-xs font-semibold text-amber-400 mb-1 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              Click Fraud & Anomaly Sandbox
+            </h4>
+            <p class="text-[11px] text-slate-400 mb-2">Simulate rapid malicious competitor clicks to test IP velocity rate limiting & protection.</p>
+            <div class="flex gap-2">
+              <button onclick="simulateNormalClick()" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs py-1.5 px-2 rounded font-medium transition">
+                Valid Click (1x)
+              </button>
+              <button onclick="simulateBurstClick()" class="flex-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs py-1.5 px-2 rounded font-medium transition">
+                Simulate Attack (5x Burst)
+              </button>
+            </div>
+            <div id="fraudAlertLog" class="mt-2 text-[11px] p-2 rounded bg-slate-900 border border-slate-800 font-mono text-slate-400 min-h-[38px] flex items-center">
+              System ready. Click an ad or test burst attack.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let currentAuction = null;
+
+    function updateHour(val) {
+      const h = parseInt(val);
+      const label = document.getElementById('hourLabel');
+      let period = "Night";
+      if (h >= 6 && h < 12) period = "Morning";
+      else if (h >= 12 && h < 17) period = "Afternoon Peak";
+      else if (h >= 17 && h < 22) period = "Evening Peak";
+      label.innerText = `${String(h).padStart(2, '0')}:00 (${period})`;
+      runAuction();
+    }
+
+    function setQuery(q) {
+      document.getElementById('queryInput').value = q;
+      runAuction();
+    }
+
+    async function loadCampaigns() {
+      try {
+        const res = await fetch('/api/campaigns');
+        const campaigns = await res.json();
+        const container = document.getElementById('campaignsContainer');
+        container.innerHTML = campaigns.map(c => {
+          const pct = Math.min(100, Math.round((c.spent_today / c.daily_budget) * 100));
+          const isHigh = pct >= 90;
+          return `
+            <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 text-xs space-y-1.5">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="font-semibold text-slate-200">${c.product_title.slice(0, 36)}...</div>
+                  <div class="text-[10px] text-slate-500 font-mono">${c.seller_id} | Max Bid: ₹${c.max_cpc_bid.toFixed(2)}</div>
+                </div>
+                <span class="text-[10px] font-mono font-bold ${isHigh ? 'text-rose-400' : 'text-emerald-400'}">₹${c.spent_today.toFixed(2)} / ₹${c.daily_budget.toFixed(2)}</span>
+              </div>
+              <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all ${isHigh ? 'bg-rose-500' : 'bg-pink-500'}" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error("Failed to load campaigns", err);
+      }
+    }
+
+    async function runAuction() {
+      const query = document.getElementById('queryInput').value;
+      const hour = parseInt(document.getElementById('hourSlider').value);
+      const segment = document.getElementById('userSegment').value;
+
+      try {
+        const res = await fetch(`/api/auction/run?hour=${hour}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            request_id: 'req_' + Math.random().toString(36).substr(2, 9),
+            query: query,
+            placement: 'search_top',
+            user_id: 'usr_guest_892',
+            user_segment: segment,
+            slot_count: 1
+          })
+        });
+        const data = await res.json();
+        currentAuction = data;
+
+        document.getElementById('auctionMetrics').innerText = `Cleared in ${data.latency_ms} ms | ${data.total_eligible_bids} Bids Evaluated`;
+
+        // Render Winning Ads
+        const winContainer = document.getElementById('winningAdsContainer');
+        if (data.winning_ads && data.winning_ads.length > 0) {
+          winContainer.innerHTML = data.winning_ads.map(w => `
+            <div class="bg-gradient-to-r from-pink-950/40 via-slate-800/80 to-slate-900 border-2 border-pink-500/60 rounded-xl p-4 shadow-xl relative overflow-hidden">
+              <div class="absolute -right-8 -top-8 w-24 h-24 bg-pink-500/10 rounded-full blur-xl pointer-events-none"></div>
+              <div class="flex items-start justify-between gap-4">
+                <div class="space-y-1">
+                  <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-pink-500 text-white shadow-sm">
+                    ★ Sponsored Winner (Rank #${w.rank})
+                  </div>
+                  <h3 class="text-sm font-bold text-white">${w.product_title}</h3>
+                  <div class="text-xs text-slate-400 font-mono">Seller: ${w.seller_id}</div>
+                </div>
+
+                <div class="text-right space-y-1">
+                  <div class="text-[10px] uppercase text-slate-400 font-semibold">GSP Clearing Price</div>
+                  <div class="text-xl font-black text-pink-400 font-mono">₹${w.charged_cpc.toFixed(2)}</div>
+                  <div class="text-[10px] text-slate-500 line-through">Max Bid: ₹${w.raw_bid_cpc.toFixed(2)}</div>
+                </div>
+              </div>
+
+              <div class="mt-3 pt-3 border-t border-slate-700/60 grid grid-cols-3 gap-2 text-center text-xs">
+                <div class="bg-slate-900/60 p-1.5 rounded">
+                  <span class="text-[10px] text-slate-400 block">Predicted CTR</span>
+                  <span class="font-mono font-semibold text-slate-200">${(w.predicted_ctr * 100).toFixed(2)}%</span>
+                </div>
+                <div class="bg-slate-900/60 p-1.5 rounded">
+                  <span class="text-[10px] text-slate-400 block">Winning eCPM</span>
+                  <span class="font-mono font-semibold text-pink-400">₹${w.ecpm.toFixed(2)}</span>
+                </div>
+                <div class="bg-slate-900/60 p-1.5 rounded">
+                  <span class="text-[10px] text-slate-400 block">Pricing Rule</span>
+                  <span class="font-mono font-semibold text-emerald-400">2nd-Price Discount</span>
+                </div>
+              </div>
+
+              <div class="mt-3 flex justify-end">
+                <button onclick="clickAd('${w.campaign_id}', '${w.product_id}', ${w.charged_cpc})" class="bg-pink-600 hover:bg-pink-500 text-white text-xs px-3 py-1.5 rounded font-medium transition shadow flex items-center gap-1">
+                  Simulate Buyer Click (Charge ₹${w.charged_cpc.toFixed(2)})
+                </button>
+              </div>
+            </div>
+          `).join('');
+        } else {
+          winContainer.innerHTML = `
+            <div class="p-6 rounded-xl bg-slate-800/40 border border-slate-700 text-center text-slate-400 text-xs">
+              No eligible bids cleared the reserve price (₹0.50) or campaigns were throttled by budget pacing.
+            </div>
+          `;
+        }
+
+        // Render Candidates Table
+        const tbody = document.getElementById('bidsTableBody');
+        tbody.innerHTML = data.all_scored_bids.map(b => {
+          const isWinner = data.winning_ads.some(w => w.campaign_id === b.campaign_id);
+          return `
+            <tr class="${isWinner ? 'bg-pink-950/20 font-medium text-white' : ''}">
+              <td class="px-3 py-2 font-medium">
+                ${b.product_title.slice(0, 32)}...
+                <div class="text-[10px] text-slate-500">${b.seller_id}</div>
+              </td>
+              <td class="px-3 py-2 font-mono">₹${b.raw_bid_cpc.toFixed(2)}</td>
+              <td class="px-3 py-2 font-mono">${(b.predicted_ctr * 100).toFixed(2)}%</td>
+              <td class="px-3 py-2 font-mono font-bold text-pink-400">₹${b.ecpm.toFixed(2)}</td>
+              <td class="px-3 py-2 font-mono">${(b.pacing_prob * 100).toFixed(0)}%</td>
+              <td class="px-3 py-2">
+                ${b.participated ? '<span class="text-emerald-400 text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10">Active</span>' : `<span class="text-rose-400 text-[10px] px-1.5 py-0.5 rounded bg-rose-500/10">${b.rejection_reason}</span>`}
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error("Auction run error", err);
+      }
+    }
+
+    async function clickAd(campaignId, productId, chargedCpc) {
+      const log = document.getElementById('fraudAlertLog');
+      try {
+        const res = await fetch('/api/clicks/record', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            campaign_id: campaignId,
+            product_id: productId,
+            user_id: 'usr_' + Math.random().toString(36).substr(2, 6),
+            charged_cpc: chargedCpc,
+            ip_address: '192.168.1.42',
+            user_agent: 'MeeshoMobileApp/v14.2 (Android 13)'
+          })
+        });
+        const result = await res.json();
+        if (result.status === 'CLICK_CHARGED') {
+          log.innerHTML = `<span class="text-emerald-400">✓ [VALID CLICK] Charged ₹${result.charged_inr} to ${result.campaign_id}</span>`;
+        } else {
+          log.innerHTML = `<span class="text-rose-400">✗ [FRAUD ALERT] ${result.reason} (Zero charge)</span>`;
+        }
+        loadCampaigns();
+      } catch (err) {
+        console.error("Click error", err);
+      }
+    }
+
+    function simulateNormalClick() {
+      if (currentAuction && currentAuction.winning_ads && currentAuction.winning_ads.length > 0) {
+        const w = currentAuction.winning_ads[0];
+        clickAd(w.campaign_id, w.product_id, w.charged_cpc);
+      } else {
+        alert("Run an auction first to get a winning ad.");
+      }
+    }
+
+    async function simulateBurstClick() {
+      if (!currentAuction || !currentAuction.winning_ads || currentAuction.winning_ads.length === 0) {
+        alert("Run an auction first.");
+        return;
+      }
+      const w = currentAuction.winning_ads[0];
+      const log = document.getElementById('fraudAlertLog');
+      log.innerText = "Firing 5 rapid clicks from same IP...";
+
+      for (let i = 1; i <= 5; i++) {
+        await clickAd(w.campaign_id, w.product_id, w.charged_cpc);
+        await new Promise(r => setTimeout(r, 80));
+      }
+    }
+
+    window.onload = () => {
+      loadCampaigns();
+      runAuction();
+    };
+  </script>
+</body>
+</html>

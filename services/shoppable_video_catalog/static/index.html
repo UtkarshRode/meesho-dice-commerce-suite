@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shoppable Video Feed & Catalog Recognition | Meesho DICE 3.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-gradient-to-tr from-purple-500 to-pink-600 flex items-center justify-center font-bold text-white shadow-lg shadow-purple-500/30">V</div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            Shoppable Video Feed & Catalog Recognition <span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 font-semibold border border-purple-500/30">Content Commerce Track</span>
+          </h1>
+          <p class="text-xs text-slate-400">Contextual Video Micro-Moments, Timeline Tag Sync & Computer-Vision Item Detection</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+          <span>🛒 Cart:</span>
+          <span id="cartCountBadge" class="font-bold text-pink-400">0 items</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start justify-center">
+      <!-- Left: Vertical Mobile Phone Frame (Reels / Shorts Player) -->
+      <div class="lg:col-span-6 flex justify-center">
+        <div class="w-full max-w-[340px] h-[640px] bg-slate-900 rounded-[36px] p-3 shadow-2xl border-4 border-slate-800 relative flex flex-col justify-between overflow-hidden">
+          <!-- Top Speaker / Camera Notch -->
+          <div class="absolute top-4 left-1/2 -translate-x-1/2 w-20 h-4 bg-slate-800 rounded-full z-30"></div>
+
+          <!-- Video Simulation Screen Area -->
+          <div id="videoScreen" class="relative w-full h-full rounded-[28px] overflow-hidden bg-slate-950 flex flex-col justify-between p-4">
+            <!-- Background Dynamic Poster representing scene -->
+            <div id="sceneBackdrop" class="absolute inset-0 bg-gradient-to-b from-amber-900/60 via-purple-950/40 to-slate-950 flex items-center justify-center transition-all duration-700">
+              <span id="sceneIcon" class="text-7xl select-none animate-pulse">👗</span>
+            </div>
+
+            <!-- Visual Bounding Box Overlay -->
+            <div id="bboxOverlay" class="absolute border-2 border-dashed border-pink-400 bg-pink-500/10 rounded-lg pointer-events-none transition-all duration-300 z-10 flex items-start p-1" style="top: 20%; left: 20%; width: 60%; height: 60%;">
+              <span id="bboxLabel" class="text-[9px] font-mono font-bold bg-pink-600 text-white px-1.5 py-0.5 rounded shadow">
+                saree (96%)
+              </span>
+            </div>
+
+            <!-- Top Creator Bar -->
+            <div class="relative z-20 flex justify-between items-center pt-5">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center font-bold text-xs text-white shadow">
+                  KP
+                </div>
+                <div>
+                  <div class="text-xs font-bold text-white leading-tight">Komal Pandey</div>
+                  <div class="text-[10px] text-slate-300">@komal_ethnic_meesho</div>
+                </div>
+              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full bg-rose-500 text-white font-bold uppercase tracking-wider animate-pulse">LIVE FEED</span>
+            </div>
+
+            <!-- Right-hand Floating Social Icons -->
+            <div class="absolute right-3 bottom-36 flex flex-col items-center gap-4 z-20">
+              <button onclick="toggleLike()" class="flex flex-col items-center gap-1 group">
+                <span id="likeHeart" class="w-10 h-10 rounded-full bg-slate-900/80 backdrop-blur border border-slate-700 flex items-center justify-center text-lg transition group-hover:scale-110">❤️</span>
+                <span id="likesCounter" class="text-[10px] font-mono text-white font-semibold">6.9k</span>
+              </button>
+              <button onclick="shareWhatsApp()" class="flex flex-col items-center gap-1 group">
+                <span class="w-10 h-10 rounded-full bg-emerald-600/90 backdrop-blur border border-emerald-500/40 flex items-center justify-center text-sm transition group-hover:scale-110">💬</span>
+                <span class="text-[10px] font-mono text-white font-semibold">Share</span>
+              </button>
+            </div>
+
+            <!-- Bottom Contextual Product Overlay Card -->
+            <div class="relative z-20 space-y-2">
+              <div id="productOverlayCard" class="glass-card border border-slate-700/80 rounded-2xl p-3 shadow-2xl transition-all duration-300">
+                <div class="flex items-center gap-3">
+                  <div id="cardThumbnail" class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center text-2xl border border-slate-700">
+                    👗
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5">
+                      <span class="text-[9px] font-bold px-1.5 py-0.2 rounded bg-pink-500/20 text-pink-400 uppercase">Context Tag</span>
+                      <span id="cardDiscount" class="text-[9px] font-bold text-emerald-400">45% OFF</span>
+                    </div>
+                    <h4 id="cardTitle" class="text-xs font-bold text-white truncate mt-0.5">Jaipuri Bandhani Silk Saree</h4>
+                    <div class="text-sm font-black text-white mt-0.5">
+                      <span id="cardPrice" class="text-pink-400">₹349</span>
+                      <span class="text-[10px] text-slate-400 line-through font-normal">₹599</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-2.5 flex gap-2">
+                  <button onclick="addToCartCurrent()" class="flex-1 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white text-xs font-semibold py-1.5 px-2 rounded-xl shadow-lg transition flex items-center justify-center gap-1">
+                    🛒 Add to Cart
+                  </button>
+                </div>
+              </div>
+
+              <!-- Timeline Video Scrubber -->
+              <div class="pt-1">
+                <div class="flex justify-between text-[10px] text-slate-400 font-mono mb-1">
+                  <span id="timeElapsed">00:02</span>
+                  <span class="text-pink-400 font-semibold" id="activeSceneLabel">Scene: Saree Highlight</span>
+                  <span>00:16</span>
+                </div>
+                <input id="timelineSlider" type="range" min="0" max="16" step="0.5" value="2" oninput="onTimelineChange(this.value)" class="w-full accent-pink-500 cursor-pointer" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: AI Vision Detection & Content Commerce Analytics -->
+      <div class="lg:col-span-6 space-y-5">
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
+          <div class="flex justify-between items-center">
+            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Automated Video Item Detection (YOLOv8 + CLIP)</h3>
+            <span class="text-xs bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 rounded font-mono">Real-Time Sync</span>
+          </div>
+
+          <p class="text-xs text-slate-400 leading-relaxed">
+            As the creator walks through the video, the computer vision engine synchronizes detected bounding boxes with catalog vector embeddings, seamlessly transitioning the in-video purchase drawer without distracting the viewer.
+          </p>
+
+          <!-- Scene Selector Buttons for Quick Jumping -->
+          <div class="grid grid-cols-3 gap-2 text-xs">
+            <button onclick="jumpTo(2)" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition">
+              <span class="text-lg block">👗</span>
+              <span class="font-semibold block text-slate-200">0s - 6s</span>
+              <span class="text-[10px] text-slate-400">Bandhani Saree</span>
+            </button>
+
+            <button onclick="jumpTo(8)" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition">
+              <span class="text-lg block">💍</span>
+              <span class="font-semibold block text-slate-200">6s - 11s</span>
+              <span class="text-[10px] text-slate-400">Jhumka Earrings</span>
+            </button>
+
+            <button onclick="jumpTo(13)" class="p-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-left transition">
+              <span class="text-lg block">🥿</span>
+              <span class="font-semibold block text-slate-200">11s - 16s</span>
+              <span class="text-[10px] text-slate-400">Rajasthani Jutti</span>
+            </button>
+          </div>
+
+          <!-- Bounding Box Telemetry Inspector -->
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800/80 font-mono text-xs space-y-2">
+            <div class="flex justify-between text-slate-400 text-[11px]">
+              <span>Active BBox Coordinates:</span>
+              <span id="telemetryBBox" class="text-pink-400">[0.15, 0.20, 0.85, 0.80]</span>
+            </div>
+            <div class="flex justify-between text-slate-400 text-[11px]">
+              <span>Detection Confidence:</span>
+              <span id="telemetryConfidence" class="text-emerald-400">0.96 (YOLOv8)</span>
+            </div>
+            <div class="flex justify-between text-slate-400 text-[11px]">
+              <span>Catalog Cosine Similarity:</span>
+              <span id="telemetrySimilarity" class="text-teal-400">0.982 (CLIP Embedding)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Impact Metrics -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300">Content Commerce Funnel Impact</h3>
+          <div class="grid grid-cols-3 gap-3 text-center">
+            <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+              <span class="text-[10px] text-slate-400 block">Watch Dwell Time</span>
+              <span class="text-base font-bold text-white font-mono">+42%</span>
+            </div>
+            <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+              <span class="text-[10px] text-slate-400 block">In-Feed Add to Cart</span>
+              <span class="text-base font-bold text-pink-400 font-mono">3.8x Higher</span>
+            </div>
+            <div class="bg-slate-800/40 p-3 rounded-xl border border-slate-700/60">
+              <span class="text-[10px] text-slate-400 block">Video-to-Purchase</span>
+              <span class="text-base font-bold text-emerald-400 font-mono">14.8% CVR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    let activeTag = null;
+    let cartTotal = 0;
+    let isLiked = false;
+
+    async function updateTimestamp(sec) {
+      const s = parseFloat(sec);
+      const mm = '00';
+      const ss = String(Math.floor(s)).padStart(2, '0');
+      document.getElementById('timeElapsed').innerText = `${mm}:${ss}`;
+
+      try {
+        const res = await fetch(`/api/videos/reel_festival_ootd_01/active-tag?time=${s}`);
+        activeTag = await res.json();
+
+        // Update Card
+        document.getElementById('cardTitle').innerText = activeTag.title;
+        document.getElementById('cardPrice').innerText = `₹${activeTag.price}`;
+        document.getElementById('cardDiscount').innerText = `${activeTag.discount_pct}% OFF`;
+
+        // Update BBox & Scene
+        const bbox = document.getElementById('bboxOverlay');
+        const icon = document.getElementById('sceneIcon');
+        const sceneLabel = document.getElementById('activeSceneLabel');
+        const cardThumb = document.getElementById('cardThumbnail');
+
+        if (s < 6) {
+          icon.innerText = "👗";
+          cardThumb.innerText = "👗";
+          sceneLabel.innerText = "Scene: Saree Showcase";
+          bbox.style.top = "15%";
+          bbox.style.left = "20%";
+          bbox.style.width = "60%";
+          bbox.style.height = "70%";
+          document.getElementById('bboxLabel').innerText = "saree (96%)";
+          document.getElementById('telemetryBBox').innerText = "[0.15, 0.20, 0.85, 0.80]";
+          document.getElementById('telemetryConfidence').innerText = "0.96 (YOLOv8)";
+          document.getElementById('telemetrySimilarity').innerText = "0.982 (CLIP)";
+        } else if (s < 11) {
+          icon.innerText = "💍";
+          cardThumb.innerText = "💍";
+          sceneLabel.innerText = "Scene: Jewellery Close-up";
+          bbox.style.top = "25%";
+          bbox.style.left = "38%";
+          bbox.style.width = "25%";
+          bbox.style.height = "25%";
+          document.getElementById('bboxLabel').innerText = "earrings (94%)";
+          document.getElementById('telemetryBBox').innerText = "[0.25, 0.40, 0.45, 0.60]";
+          document.getElementById('telemetryConfidence').innerText = "0.94 (YOLOv8)";
+          document.getElementById('telemetrySimilarity').innerText = "0.964 (CLIP)";
+        } else {
+          icon.innerText = "🥿";
+          cardThumb.innerText = "🥿";
+          sceneLabel.innerText = "Scene: Footwear Pan";
+          bbox.style.top = "68%";
+          bbox.style.left = "30%";
+          bbox.style.width = "40%";
+          bbox.style.height = "25%";
+          document.getElementById('bboxLabel').innerText = "footwear (91%)";
+          document.getElementById('telemetryBBox').innerText = "[0.70, 0.30, 0.95, 0.70]";
+          document.getElementById('telemetryConfidence').innerText = "0.91 (YOLOv8)";
+          document.getElementById('telemetrySimilarity').innerText = "0.948 (CLIP)";
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function onTimelineChange(val) {
+      updateTimestamp(val);
+    }
+
+    function jumpTo(sec) {
+      const slider = document.getElementById('timelineSlider');
+      slider.value = sec;
+      updateTimestamp(sec);
+    }
+
+    async function addToCartCurrent() {
+      if (!activeTag) return;
+      try {
+        const res = await fetch('/api/cart/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            video_id: 'reel_festival_ootd_01',
+            sku_id: activeTag.sku_id,
+            title: activeTag.title,
+            price: activeTag.price,
+            user_id: 'usr_shopper_01',
+            added_at_timestamp_sec: parseFloat(document.getElementById('timelineSlider').value)
+          })
+        });
+        const data = await res.json();
+        cartTotal = data.total_cart_items;
+        document.getElementById('cartCountBadge').innerText = `${cartTotal} items`;
+        alert(`✓ Added ${activeTag.title} (₹${activeTag.price}) to cart!`);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function toggleLike() {
+      isLiked = !isLiked;
+      const heart = document.getElementById('likeHeart');
+      const counter = document.getElementById('likesCounter');
+      if (isLiked) {
+        heart.innerText = "💖";
+        counter.innerText = "7.0k";
+      } else {
+        heart.innerText = "❤️";
+        counter.innerText = "6.9k";
+      }
+    }
+
+    function shareWhatsApp() {
+      alert("WhatsApp catalog link generated with creator commission attribution!");
+    }
+
+    window.onload = () => updateTimestamp(2);
+  </script>
+</body>
+</html>

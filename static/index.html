@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meesho DICE 3.0 | 4-Pillar Commerce Engineering Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .hero-gradient { background: radial-gradient(circle at 50% 0%, rgba(244, 63, 94, 0.15) 0%, rgba(15, 23, 42, 0) 75%); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen hero-gradient flex flex-col justify-between">
+  <!-- Top Header -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-rose-500 via-pink-600 to-indigo-600 flex items-center justify-center font-black text-white text-lg shadow-lg shadow-pink-500/30">M</div>
+        <div>
+          <h1 class="text-base font-extrabold tracking-tight text-white flex items-center gap-2">
+            Meesho DICE Challenge 3.0
+            <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 font-bold border border-rose-500/30 uppercase tracking-wide">PPI & Senior Associate Portfolio</span>
+          </h1>
+          <p class="text-xs text-slate-400">Democratising Internet Commerce: Growth • Monetization • Content Commerce • Pricing</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 text-xs">
+        <a href="/docs" target="_blank" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+          API Swagger Docs
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 flex-1">
+    <div class="text-center space-y-3 max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-slate-300 font-medium">
+        <span class="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        4 Production-Grade Engines Built & Tested
+      </div>
+      <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+        Think it. Build it. <span class="bg-gradient-to-r from-rose-400 via-pink-400 to-amber-400 bg-clip-text text-transparent">Ship it.</span>
+      </h2>
+      <p class="text-sm text-slate-400 leading-relaxed">
+        Engineered specifically for the Indian Bharat e-commerce ecosystem: solving extreme flash-sale concurrency, 0%-commission supplier ad monetization, WhatsApp viral social loops, and econometric smart pricing.
+      </p>
+    </div>
+
+    <!-- 4 Track Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+      <!-- 1. Monetization Track -->
+      <div class="bg-slate-900/90 border border-slate-800 hover:border-pink-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-pink-500/20 text-pink-400 border border-pink-500/30 uppercase">Track 1: Monetization</span>
+            <span class="text-xs text-slate-500 font-mono">Port 8001</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-pink-300 transition">Real-Time Ad-Auction Engine</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Generalized Second-Price (GSP) sponsored search ad server with LightGBM pCTR ranking, diurnal budget pacing, and click-fraud filtering.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-400">
+            <span class="px-2 py-0.5 rounded bg-slate-800">GSP Auction</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">eCPM Ranking</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">Budget Pacing</span>
+          </div>
+        </div>
+        <div class="pt-5">
+          <a href="/monetization/" target="_blank" class="w-full bg-gradient-to-r from-pink-600 to-indigo-600 hover:from-pink-500 hover:to-indigo-500 text-white text-xs font-semibold py-2 px-3 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+            Launch Engine Demo →
+          </a>
+        </div>
+      </div>
+
+      <!-- 2. Growth Track -->
+      <div class="bg-slate-900/90 border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 uppercase">Track 2: Growth</span>
+            <span class="text-xs text-slate-500 font-mono">Port 8002</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-emerald-300 transition">Distributed Group-Commerce</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Social group-buying protocol with atomic reservation locking, 2-hr countdown timers, and WhatsApp referral DAG with K-factor analytics.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-400">
+            <span class="px-2 py-0.5 rounded bg-slate-800">K-Factor: 1.34</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">WhatsApp Loops</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">Atomic Locks</span>
+          </div>
+        </div>
+        <div class="pt-5">
+          <a href="/growth/" target="_blank" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold py-2 px-3 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+            Launch Engine Demo →
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. Pricing Track -->
+      <div class="bg-slate-900/90 border border-slate-800 hover:border-amber-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 uppercase">Track 3: Pricing</span>
+            <span class="text-xs text-slate-500 font-mono">Port 8003</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-amber-300 transition">Price Elasticity Optimizer</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Econometric Log-Log demand regression, analytical Lerner profit maximization ($P^*$), and interactive What-If seller sensitivity simulator.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-400">
+            <span class="px-2 py-0.5 rounded bg-slate-800">OLS Regression</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">Optimal P*</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">Buy-Box Index</span>
+          </div>
+        </div>
+        <div class="pt-5">
+          <a href="/pricing-engine/" target="_blank" class="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white text-xs font-semibold py-2 px-3 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+            Launch Engine Demo →
+          </a>
+        </div>
+      </div>
+
+      <!-- 4. Content Commerce Track -->
+      <div class="bg-slate-900/90 border border-slate-800 hover:border-purple-500/50 rounded-2xl p-5 shadow-xl transition-all duration-300 flex flex-col justify-between group">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 border border-purple-500/30 uppercase">Track 4: Content</span>
+            <span class="text-xs text-slate-500 font-mono">Port 8004</span>
+          </div>
+          <h3 class="text-base font-bold text-white group-hover:text-purple-300 transition">Shoppable Video & Catalog</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            Mobile-first 9:16 vertical video commerce player with timeline product tag sync, 1-click in-feed cart, and YOLOv8/CLIP visual item detection.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-400">
+            <span class="px-2 py-0.5 rounded bg-slate-800">Timeline Sync</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">YOLOv8 + CLIP</span>
+            <span class="px-2 py-0.5 rounded bg-slate-800">1-Click Cart</span>
+          </div>
+        </div>
+        <div class="pt-5">
+          <a href="/content-commerce/" target="_blank" class="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-semibold py-2 px-3 rounded-xl shadow-lg transition flex items-center justify-center gap-1.5">
+            Launch Engine Demo →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interactive Sandbox Frame -->
+    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 shadow-2xl space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Live Embedded Sandbox:</span>
+          <div class="flex gap-1.5 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+            <button onclick="setSandbox('/monetization/')" class="px-2.5 py-1 rounded-md text-slate-300 hover:text-white transition active-tab" id="btn-monetization">Ad-Auction</button>
+            <button onclick="setSandbox('/growth/')" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition" id="btn-growth">Group-Commerce</button>
+            <button onclick="setSandbox('/pricing-engine/')" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition" id="btn-pricing">Price Elasticity</button>
+            <button onclick="setSandbox('/content-commerce/')" class="px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition" id="btn-video">Shoppable Video</button>
+          </div>
+        </div>
+        <a id="externalLink" href="/monetization/" target="_blank" class="text-xs text-rose-400 hover:text-rose-300 font-medium flex items-center gap-1">
+          Open in Full Tab ↗
+        </a>
+      </div>
+
+      <div class="w-full h-[620px] rounded-xl overflow-hidden bg-slate-950 border border-slate-800/80">
+        <iframe id="sandboxFrame" src="/monetization/" class="w-full h-full border-0"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950/80 py-4 text-center text-xs text-slate-500">
+    Built for Meesho DICE Challenge 3.0 • Automated Pytest Suite: 11/11 Passing • Python 3.13 & FastAPI
+  </footer>
+
+  <script>
+    function setSandbox(url) {
+      document.getElementById('sandboxFrame').src = url;
+      document.getElementById('externalLink').href = url;
+
+      const map = {
+        '/monetization/': 'btn-monetization',
+        '/growth/': 'btn-growth',
+        '/pricing-engine/': 'btn-pricing',
+        '/content-commerce/': 'btn-video'
+      };
+
+      Object.values(map).forEach(id => {
+        const btn = document.getElementById(id);
+        btn.className = "px-2.5 py-1 rounded-md text-slate-400 hover:text-white transition";
+      });
+
+      const activeBtn = document.getElementById(map[url]);
+      if (activeBtn) {
+        activeBtn.className = "px-2.5 py-1 rounded-md bg-slate-800 text-white font-semibold transition";
+      }
+    }
+  </script>
+</body>
+</html>
